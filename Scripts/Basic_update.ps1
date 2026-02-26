@@ -1,7 +1,7 @@
 # ==========================================
-# Windows Basic Auto Update Script by Lucas Duarte
+# Windows Basic Auto Update Script
+# by Lucas Duarte - Miti Soluções
 # ==========================================
-
 $BasePath = "C:\Scripts"
 $LogPath = "$BasePath\log.txt"
 
@@ -12,7 +12,7 @@ if (!(Test-Path $BasePath)) {
 function Write-Log {
     param ([string]$Message)
     $Time = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    "$Time - $Message" | Out-File -Append -FilePath $LogPath
+    "$Time - $Message" | Out-File -Append -FilePath $LogPath -Encoding utf8
 }
 
 Write-Log "======================================="
@@ -96,6 +96,8 @@ if ($Result -and $Result.RebootRequired) {
 
     Write-Log "Timer de reinício iniciado (10 minutos)."
 }
-
+Write-Log "FIM DA EXECUÇÃO"
+Write-Log "Script desenvolvido por Lucas Duarte - Miti Soluções"
+Write-Log "======================================="
 Write-Log "FIM DA EXECUÇÃO"
 Write-Log "======================================="
