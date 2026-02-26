@@ -1,9 +1,12 @@
 # ==========================================
 # Windows Basic Auto Update Script
+# Version: 1.0.0
 # by Lucas Duarte - Miti Soluções
 # ==========================================
+
 $BasePath = "C:\Scripts"
 $LogPath = "$BasePath\log.txt"
+$ComputerName = $env:COMPUTERNAME
 
 if (!(Test-Path $BasePath)) {
     New-Item -ItemType Directory -Path $BasePath -Force | Out-Null
@@ -16,6 +19,7 @@ function Write-Log {
 }
 
 Write-Log "======================================="
+Write-Log "Computador: $ComputerName"
 Write-Log "INICIO DA EXECUÇÃO"
 
 # =========================
@@ -57,7 +61,6 @@ try {
     } else {
         Write-Log "Nenhuma atualização do Windows pendente"
     }
-
 }
 catch {
     Write-Log "ERRO Windows Update: $_"
@@ -70,34 +73,32 @@ catch {
 try {
     Write-Log "Verificando atualização de aplicativos via Winget..."
 
-    $WingetOutput = winget upgrade --all --silent --accept-package-agreements --accept-source-agreements
-
-    if ($WingetOutput) {
-        $WingetOutput | Out-File -Append $LogPath
-    }
+    winget upgrade --all --silent --accept-package-agreements --accept-source-agreements `
+        | Out-File -Append -FilePath $LogPath -Encoding utf8
 
     Write-Log "Winget finalizado"
-
 }
 catch {
     Write-Log "ERRO Winget: $_"
 }
+
+# =========================
+# REBOOT CONTROLADO
+# =========================
+
 if ($Result -and $Result.RebootRequired) {
 
     Write-Log "Reboot necessário detectado."
 
-    # Aviso visível para todos usuários logados
     msg * "ATUALIZAÇÃO CORPORATIVA: Seu computador será reiniciado em 10 minutos para concluir atualizações. Salve seu trabalho imediatamente."
 
     Write-Log "Aviso de reinício enviado ao usuário."
 
-    # Reinício forçado em 10 minutos (600 segundos)
     shutdown /r /f /t 600 /c "Reinício automático obrigatório para concluir atualizações do sistema."
 
     Write-Log "Timer de reinício iniciado (10 minutos)."
 }
+
 Write-Log "FIM DA EXECUÇÃO"
 Write-Log "Script desenvolvido por Lucas Duarte - Miti Soluções"
-Write-Log "======================================="
-Write-Log "FIM DA EXECUÇÃO"
 Write-Log "======================================="
