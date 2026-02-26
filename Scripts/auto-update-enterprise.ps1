@@ -91,6 +91,7 @@ catch {
 
 Write-Log "Status final: $Global:UpdateStatus"
 
+
 # =========================
 # ENVIO DE EMAIL CORPORATIVO
 # =========================
@@ -100,20 +101,30 @@ try {
 
     $Cred = Import-Clixml -Path "C:\Scripts\mailcred.xml"
 
+    if ($Global:UpdateStatus -eq "SUCCESS") {
+        $SubjectPrefix = "✅ SUCCESS"
+    }
+    else {
+        $SubjectPrefix = "❌ FAILED"
+    }
+
     $EmailBody = @"
-Relatório de Atualização
+Relatório de Atualização Automática
 
 Computador: $Computer
 Data: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
 Status: $Global:UpdateStatus
 
-Verifique o log em anexo para detalhes.
+Consulte o log em anexo para detalhes completos.
+
+---
+Windows Enterprise Update Automation
 "@
 
     Send-MailMessage `
         -From "updates@empresa.com" `
         -To "seuemail@empresa.com" `
-        -Subject "[$Global:UpdateStatus] Update Report - $Computer" `
+        -Subject "[$SubjectPrefix] Update Report - $Computer" `
         -Body $EmailBody `
         -SmtpServer "smtp.office365.com" `
         -Port 587 `
@@ -122,6 +133,9 @@ Verifique o log em anexo para detalhes.
         -Attachments $LogFile
 
     Write-Log "Email enviado com sucesso"
+}
+catch {
+    Write-Log "ERRO ao enviar email: $_"
 }
 catch {
     Write-Log "ERRO ao enviar email: $_"
