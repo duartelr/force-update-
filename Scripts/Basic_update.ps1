@@ -82,6 +82,20 @@ try {
 catch {
     Write-Log "ERRO Winget: $_"
 }
+if ($Result -and $Result.RebootRequired) {
+
+    Write-Log "Reboot necessário detectado."
+
+    # Aviso visível para todos usuários logados
+    msg * "ATUALIZAÇÃO CORPORATIVA: Seu computador será reiniciado em 10 minutos para concluir atualizações. Salve seu trabalho imediatamente."
+
+    Write-Log "Aviso de reinício enviado ao usuário."
+
+    # Reinício forçado em 10 minutos (600 segundos)
+    shutdown /r /f /t 600 /c "Reinício automático obrigatório para concluir atualizações do sistema."
+
+    Write-Log "Timer de reinício iniciado (10 minutos)."
+}
 
 Write-Log "FIM DA EXECUÇÃO"
 Write-Log "======================================="
